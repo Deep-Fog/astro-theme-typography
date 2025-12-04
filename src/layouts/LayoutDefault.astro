@@ -7,6 +7,8 @@ import SiteSeo from '~/components/SiteSeo.astro'
 import LaTeX from '~/components/LaTeX.astro'
 import Analytics from '~/components/Analytics.astro'
 import ThemeScript from '~/components/ThemeScript.astro'
+import PwaScript from '~/components/PwaScript.astro'
+import GoogleVerification from '~/components/verification/GoogleVerification.astro'
 import '~/styles/global.css'
 
 const lang = themeConfig.appearance.locale ?? 'en-us'
@@ -18,7 +20,9 @@ const dark = themeConfig.appearance.theme === 'dark'
     <slot name="seo"> <SiteSeo /> </slot>
     <LaTeX />
     <Analytics />
+    <GoogleVerification />
     <ThemeScript />
+    <PwaScript />
   </head>
 
   <body
