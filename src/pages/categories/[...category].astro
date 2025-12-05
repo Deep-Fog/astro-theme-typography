@@ -1,0 +1,85 @@
+---
+import { themeConfig } from '~/.config'
+import SiteSeo from '~/components/SiteSeo.astro'
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+import type { Post } from '~/types'
+import { formatDate, getCategories, getPathFromCategory } from '~/utils'
+
+const { translate: t } = Astro.locals
+
+export async function getStaticPaths() {
+  const categoryMap = await getCategories()
+  return Array.from(categoryMap).map(([key, value]) => {
+    const path = getPathFromCategory(key, themeConfig.site.categoryMap)
+    return {
+      params: { category: path },
+      props: { posts: value, name: key },
+    }
+  })
+}
+
+const { posts, name } = Astro.props
+
+function getListItems(posts: Post[]) {
+  const result = posts.map((post) => ({
+    title: post.data.title,
+    href: `/posts/${post.id}/`,
+    date: formatDate(post.data.pubDate),
+  }))
+  return result
+}
+---
+
+<LayoutDefault>
+  <SiteSeo
+    slot="seo"
+    title={`${name} - ${t('category') || '分类'} - ${themeConfig.site.title}`}
+    desc={`${name}${t('category_description') || '分类下的所有文章'} - ${themeConfig.site.title}`}
+    type="website"
+    locale={themeConfig.appearance.locale}
+    keywords={`${name},${t('category') || '分类'},${themeConfig.site.title},${posts.map((post) => post.data.title).join(',')}`}
+    jsonLd={[
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        headline: `${name} - ${t('category') || '分类'} - ${themeConfig.site.title}`,
+        description: `${name}${t('category_description') || '分类下的所有文章'} - ${themeConfig.site.title}`,
+        url: new URL(Astro.url.pathname, Astro.site).toString(),
+        publisher: {
+          '@type': 'Person',
+          name: themeConfig.site.author,
+          url: themeConfig.site.website,
+        },
+        inLanguage: themeConfig.appearance.locale || 'zh-CN',
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: posts.map((post, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: new URL(`/posts/${post.id}/`, Astro.site).toString(),
+            name: post.data.title,
+            description: post.data.description || '',
+            datePublished: post.data.pubDate?.toISOString() || '',
+          })),
+        },
+        datePublished: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+      },
+    ]}
+  />
+  <section>
+    <h2 class="post-title"># {name}</h2>
+    <ul class="pl-6 py-3" flex="~ col gap-4">
+      {
+        getListItems(posts).map(({ title, href, date }) => (
+          <li>
+            <h3 class="post-title">
+              <a href={href}>{title}</a>
+            </h3>
+            <time>{date}</time>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</LayoutDefault>

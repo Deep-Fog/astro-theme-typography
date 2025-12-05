@@ -1,0 +1,71 @@
+---
+import { themeConfig } from '~/.config'
+import SiteSeo from '~/components/SiteSeo.astro'
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+import { getCategories, getPathFromCategory } from '~/utils/index'
+
+const { translate: t } = Astro.locals
+const categoryMap = await getCategories()
+
+const list = getListFromMap(categoryMap)
+
+function getListFromMap(map: typeof categoryMap) {
+  return Array.from(map).map(([key, value]) => ({
+    title: key,
+    href: `/categories/${getPathFromCategory(key, themeConfig.site.categoryMap)}`,
+    size: t('categories_count', value.length),
+  }))
+}
+---
+
+<LayoutDefault>
+  <SiteSeo
+    slot="seo"
+    title={`${t('Categories')} - ${themeConfig.site.title}`}
+    desc={`${themeConfig.site.title}${t('all_categories_description') || '的所有文章分类'}`}
+    type="website"
+    locale={themeConfig.appearance.locale}
+    keywords={`${t('Categories')},${themeConfig.site.title},${list.map((item) => item.title).join(',')}`}
+    jsonLd={[
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        headline: `${t('Categories')} - ${themeConfig.site.title}`,
+        description: `${themeConfig.site.title}${t('all_categories_description') || '的所有文章分类'}`,
+        url: new URL(Astro.url.pathname, Astro.site).toString(),
+        publisher: {
+          '@type': 'Person',
+          name: themeConfig.site.author,
+          url: themeConfig.site.website,
+        },
+        inLanguage: themeConfig.appearance.locale || 'zh-CN',
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: list.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: new URL(item.href, Astro.site).toString(),
+            name: item.title,
+          })),
+        },
+        datePublished: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+      },
+    ]}
+  />
+  <section>
+    <h2 class="post-title">{t('Categories')}</h2>
+    <ul class="pl-6" flex="~ col gap-4">
+      {
+        list.map(({ title, href, size }) => (
+          <li>
+            <h3 class="post-title">
+              <a href={href}># {title}</a>
+            </h3>
+            <p>{size}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</LayoutDefault>
