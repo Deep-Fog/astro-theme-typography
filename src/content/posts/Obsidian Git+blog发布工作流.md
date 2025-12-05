@@ -8,11 +8,10 @@ slug: obsidian-git-workflow
 tags:
   - AI
 ---
-
 本教程分为两大部分：
 
-- **第一部分：本地同步 (个人)** - 使用 Obsidian Git 插件，将你的**整个**笔记库安全、私密地同步到一个私有 GitHub 仓库。这是你的个人备份和多设备同步方案。
-- **第二部分：自动发布 (公开)** - 设置一个 GitHub Action，监听你私有仓库中一个特定文件夹的变化，并自动将该文件夹中的笔记同步到一个**公开**的博客仓库。
+*   **第一部分：本地同步 (个人)** - 使用 Obsidian Git 插件，将你的**整个**笔记库安全、私密地同步到一个私有 GitHub 仓库。这是你的个人备份和多设备同步方案。
+*   **第二部分：自动发布 (公开)** - 设置一个 GitHub Action，监听你私有仓库中一个特定文件夹的变化，并自动将该文件夹中的笔记同步到一个**公开**的博客仓库。
 
 **最终效果**：你在 Obsidian 中写作，将完成的文章拖入指定的“待发布”文件夹。剩下的所有事情——备份、发布、更新网站——都将自动完成。
 
@@ -29,17 +28,16 @@ tags:
 我们需要两个独立的仓库来划分私有笔记和公开文章。
 
 1.  **私有笔记仓库 (Vault Repo)**
-
-    - 在 GitHub 上创建一个**新仓库**。
-    - **名称**: `obsidian-vault` (或其他你喜欢的名字)。
-    - **类型**: **必须设置为 `Private` (私有)**。这是你的个人数据保险箱。
-    - **不要**勾选任何初始化选项 (如 README)。
+    *   在 GitHub 上创建一个**新仓库**。
+    *   **名称**: `obsidian-vault` (或其他你喜欢的名字)。
+    *   **类型**: **必须设置为 `Private` (私有)**。这是你的个人数据保险箱。
+    *   **不要**勾选任何初始化选项 (如 README)。
 
 2.  **公开博客仓库 (Blog Repo)**
-    - 再次创建一个**新仓库**。
-    - **名称**: `my-awesome-blog` (或你的博客项目名)。
-    - **类型**: 通常是 `Public` (公开)，这样别人才能访问你的博客。
-    - 这个仓库将存放你的博客源代码 (例如 Astro, Hugo, Jekyll 等)。
+    *   再次创建一个**新仓库**。
+    *   **名称**: `my-awesome-blog` (或你的博客项目名)。
+    *   **类型**: 通常是 `Public` (公开)，这样别人才能访问你的博客。
+    *   这个仓库将存放你的博客源代码 (例如 Astro, Hugo, Jekyll 等)。
 
 ---
 
@@ -56,14 +54,13 @@ tags:
 #### **步骤 2: 初始化并连接到你的私有仓库**
 
 1.  **初始化本地仓库**:
-
-    - 在 Obsidian 中，按 `Ctrl+P` (或 `Cmd+P`) 打开命令面板。
-    - 输入并执行 `Git: Initialize repository`。
+    *   在 Obsidian 中，按 `Ctrl+P` (或 `Cmd+P`) 打开命令面板。
+    *   输入并执行 `Git: Initialize repository`。
 
 2.  **连接到远程私有仓库**:
-    - 回到你 GitHub 上的**私有** `obsidian-vault` 仓库页面，复制其 HTTPS 地址 (例如 `https://github.com/your-username/obsidian-vault.git`)。
-    - 在 Obsidian 命令面板中，执行 `Git: Add remote repository`。
-    - 别名输入 `origin` (默认即可)，然后粘贴你刚刚复制的私有仓库地址。
+    *   回到你 GitHub 上的**私有** `obsidian-vault` 仓库页面，复制其 HTTPS 地址 (例如 `https://github.com/your-username/obsidian-vault.git`)。
+    *   在 Obsidian 命令面板中，执行 `Git: Add remote repository`。
+    *   别名输入 `origin` (默认即可)，然后粘贴你刚刚复制的私有仓库地址。
 
 #### **步骤 3: 创建用于个人同步的 PAT (个人访问令牌)**
 
@@ -81,8 +78,8 @@ tags:
 1.  在 Obsidian 命令面板中，执行 `Git: Commit all changes`。输入提交信息，如 `Initial vault commit`。
 2.  执行 `Git: Push`。
 3.  此时可能会弹出登录窗口：
-    - **用户名**: 你的 GitHub 用户名。
-    - **密码**: **粘贴你刚刚生成的 PAT**，而不是你的 GitHub 登录密码。
+    *   **用户名**: 你的 GitHub 用户名。
+    *   **密码**: **粘贴你刚刚生成的 PAT**，而不是你的 GitHub 登录密码。
 4.  推送成功后，你的整个笔记库就备份到了私有的 `obsidian-vault` 仓库。
 
 #### **步骤 5: 设置自动化**
@@ -151,15 +148,15 @@ jobs:
       - name: Checkout Obsidian Vault
         uses: actions/checkout@v3
         with:
-          path: private-vault # 下载到名为 private-vault 的临时文件夹
+          path: 'private-vault' # 下载到名为 private-vault 的临时文件夹
 
       # 步骤二：使用我们设置的秘密令牌，签出公开的博客仓库
       - name: Checkout Blog Repo
         uses: actions/checkout@v3
         with:
-          repository: your-username/my-awesome-blog # ✅ 修改为你的公开博客仓库路径
-          token: ${{ secrets.ACCESS_TOKEN }} # 使用秘密令牌进行授权
-          path: public-blog # 下载到名为 public-blog 的临时文件夹
+          repository: 'your-username/my-awesome-blog' # ✅ 修改为你的公开博客仓库路径
+          token: ${{ secrets.ACCESS_TOKEN }}    # 使用秘密令牌进行授权
+          path: 'public-blog'                   # 下载到名为 public-blog 的临时文件夹
 
       # 步骤三：同步文件（最关键的一步）
       - name: Sync Published Notes
