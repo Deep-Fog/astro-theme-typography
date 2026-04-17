@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import consola from 'consola'
@@ -18,8 +18,17 @@ async function createPost(): Promise<void> {
   const extension: string = await consola.prompt('Select file extension: ', { type: 'select', options: ['.md', '.mdx'] })
   const isDraft: boolean = await consola.prompt('Is this a draft?', { type: 'confirm', initial: true })
 
-  const targetDir = './src/content/posts/'
-  const fullPath: string = path.join(targetDir, `${filename}${extension}`)
+  if (!filename || /[\\/\0]/.test(filename) || filename.includes('..')) {
+    consola.error('Invalid file name: must not contain path separators or traversal sequences.')
+    return
+  }
+
+  const targetDir = path.resolve('./src/content/posts/')
+  const fullPath: string = path.resolve(targetDir, `${filename}${extension}`)
+  if (!fullPath.startsWith(targetDir + path.sep)) {
+    consola.error('Invalid file name: resolved path escapes posts directory.')
+    return
+  }
 
   const frontmatter = getFrontmatter({
     title: filename,
@@ -37,7 +46,7 @@ async function createPost(): Promise<void> {
     const open: boolean = await consola.prompt('Open the new post?', { type: 'confirm', initial: true })
     if (open) {
       consola.info(`Opening ${fullPath}...`)
-      execSync(`code "${fullPath}"`)
+      execFileSync('code', [fullPath], { shell: false, stdio: 'inherit' })
     }
   }
   catch (error) {

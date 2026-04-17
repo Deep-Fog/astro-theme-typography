@@ -21,12 +21,22 @@ export async function GET(_context: APIContext) {
   })
 }
 
+function escapeXml(value: string) {
+  return value.replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&apos;',
+  }[ch]!))
+}
+
 function getCustomData() {
   const follow = themeConfig.rss.follow
   if (!follow)
     return ''
   const { feedId, userId } = follow
-  return `<follow_challenge><feedId>${feedId}</feedId><userId>${userId}</userId></follow_challenge>`
+  return `<follow_challenge><feedId>${escapeXml(String(feedId))}</feedId><userId>${escapeXml(String(userId))}</userId></follow_challenge>`
 }
 
 function getPostItem(post: Post) {
