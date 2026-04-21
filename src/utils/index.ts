@@ -43,24 +43,41 @@ export async function getPosts(isArchivePage = false) {
 }
 
 const parser = new MarkdownIt()
-const descriptionCache = new WeakMap<Post, string>()
+const descriptionCache = new Map<string, string>()
 export function getPostDescription(post: Post) {
   if (post.data.description) {
     return post.data.description
   }
 
-  const cached = descriptionCache.get(post)
+  const cached = descriptionCache.get(post.id)
   if (cached !== undefined)
     return cached
 
   const html = parser.render(post.body || '')
   const sanitized = sanitizeHtml(html, { allowedTags: [] }).slice(0, 400)
-  descriptionCache.set(post, sanitized)
+  descriptionCache.set(post.id, sanitized)
   return sanitized
 }
 
 export function formatDate(date: Date, format: string = 'YYYY-MM-DD') {
   return dayjs(date).format(format)
+}
+
+// CJK-aware word counter:
+// - each CJK character counts as one word
+// - remaining (latin/cyrillic/etc.) text is split on whitespace
+const CJK_CHAR = /[\u{3040}-\u{30FF}\u{3400}-\u{4DBF}\u{4E00}-\u{9FFF}\u{AC00}-\u{D7AF}\u{F900}-\u{FAFF}]/gu
+export function countWords(text: string): number {
+  if (!text)
+    return 0
+  const cjkMatches = text.match(CJK_CHAR)
+  const cjkCount = cjkMatches ? cjkMatches.length : 0
+  const latinCount = text
+    .replace(CJK_CHAR, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .length
+  return cjkCount + latinCount
 }
 
 export function getPathFromCategory(

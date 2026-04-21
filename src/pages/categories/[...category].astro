@@ -37,7 +37,7 @@ function getListItems(posts: Post[]) {
     desc={`${name}${t('category_description') || '分类下的所有文章'} - ${themeConfig.site.title}`}
     type="website"
     locale={themeConfig.appearance.locale}
-    keywords={`${name},${t('category') || '分类'},${themeConfig.site.title},${posts.map((post) => post.data.title).join(',')}`}
+    keywords={`${name},${t('category')},${themeConfig.site.title}`}
     jsonLd={[
       {
         '@context': 'https://schema.org',

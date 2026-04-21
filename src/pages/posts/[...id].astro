@@ -6,7 +6,7 @@ import Pagination from '~/components/Pagination.astro'
 import SiteSeo from '~/components/SiteSeo.astro'
 import LayoutDefault from '~/layouts/LayoutDefault.astro'
 import LayoutPost from '~/layouts/LayoutPost.astro'
-import { getPosts, getPathFromCategory } from '~/utils'
+import { getPosts, getPathFromCategory, countWords } from '~/utils'
 import { render } from 'astro:content'
 
 export const getStaticPaths = (async () => {
@@ -81,7 +81,7 @@ function getUrl(id: string) {
         keywords: entry.data.categories?.join(', '),
         articleSection: entry.data.categories?.[0] || '',
         inLanguage: themeConfig.appearance.locale || 'zh-CN',
-        wordCount: entry.body ? entry.body.split(/\s+/g).length : 0,
+        wordCount: countWords(entry.body ?? ''),
         isAccessibleForFree: 'True',
       },
       {
@@ -123,10 +123,10 @@ function getUrl(id: string) {
   <Pagination
     showLeft={Boolean(prev)}
     leftTitle={`${t('prev_post')}: ${prev?.data.title}`}
-    leftUrl={getUrl(prev?.id)}
+    leftUrl={prev ? getUrl(prev.id) : undefined}
     showRight={Boolean(next)}
     rightTitle={`${t('next_post')}: ${next?.data.title}`}
-    rightUrl={getUrl(next?.id)}
+    rightUrl={next ? getUrl(next.id) : undefined}
     showPageCount={false}
   />
   <!-- BUG 这里使用 client:visible 会导致构建失败。ref: https://github.com/withastro/astro/issues/7329 -->

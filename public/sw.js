@@ -1,9 +1,12 @@
 // Service Worker for PWA support
-const CACHE_NAME = 'typography-theme-v1'
+// Strategy:
+//   - HTML documents: network-first (so new posts appear without waiting for cache bust)
+//   - Static assets: cache-first
+// Bump CACHE_NAME when you need all clients to drop their old caches.
+const CACHE_NAME = 'typography-theme-v2'
 
-// 获取当前base路径
 function getBasePath() {
-  return self.location.pathname.replace(/\/sw\.js$/, '')
+  return globalThis.location.pathname.replace(/\/sw\.js$/, '')
 }
 
 const basePath = getBasePath()
@@ -14,56 +17,70 @@ const urlsToCache = [
   `${basePath}/placeholder.png`,
 ]
 
-self.addEventListener('install', (event) => {
+globalThis.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache)
-      }),
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => globalThis.skipWaiting()),
   )
 })
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
+function isHtmlRequest(request) {
+  return request.mode === 'navigate'
+    || request.destination === 'document'
+    || (request.headers.get('accept') || '').includes('text/html')
+}
+
+globalThis.addEventListener('fetch', (event) => {
+  const { request } = event
+
+  // Never intercept non-GET requests.
+  if (request.method !== 'GET')
+    return
+
+  if (isHtmlRequest(request)) {
+    // network-first for HTML so content updates are visible immediately
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone()
+            caches.open(CACHE_NAME).then(cache => cache.put(request, clone))
+          }
           return response
-        }
-        return fetch(event.request).then(
-          (response) => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response
-            }
+        })
+        .catch(() => caches.match(request).then(cached => cached || Response.error())),
+    )
+    return
+  }
 
-            // Clone the response
-            const responseToCache = response.clone()
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache)
-              })
-
-            return response
-          },
-        )
-      }),
+  // cache-first for everything else
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached)
+        return cached
+      return fetch(request).then((response) => {
+        if (!response || response.status !== 200 || response.type !== 'basic')
+          return response
+        const clone = response.clone()
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone))
+        return response
+      })
+    }),
   )
 })
 
-self.addEventListener('activate', (event) => {
+globalThis.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME]
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    caches.keys()
+      .then(cacheNames => Promise.all(
         cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
+          if (!cacheWhitelist.includes(cacheName))
             return caches.delete(cacheName)
-          }
+          return undefined
         }),
-      )
-    }),
+      ))
+      .then(() => globalThis.clients.claim()),
   )
 })

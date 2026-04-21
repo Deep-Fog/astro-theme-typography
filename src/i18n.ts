@@ -22,6 +22,9 @@ export const LANGUAGES = {
     next: '下一页',
     prev_post: '上一篇',
     next_post: '下一篇',
+    category: '分类',
+    category_description: '分类下的所有文章',
+    Uncategorized: '未分类',
   },
   'en-us': {
     Home: 'Home',
@@ -46,6 +49,9 @@ export const LANGUAGES = {
     next: 'Next',
     prev_post: 'Previous post',
     next_post: 'Next post',
+    category: 'Category',
+    category_description: 'Posts in this category',
+    Uncategorized: 'Uncategorized',
   },
   'zh-tw': {
     Home: '首頁',
@@ -70,6 +76,9 @@ export const LANGUAGES = {
     next: '下一頁',
     prev_post: '上一篇',
     next_post: '下一篇',
+    category: '分類',
+    category_description: '分類下的所有文章',
+    Uncategorized: '未分類',
   },
   'ja-jp': {
     Home: 'ホーム',
@@ -94,6 +103,9 @@ export const LANGUAGES = {
     next: '次へ',
     prev_post: '前の投稿',
     next_post: '次の投稿',
+    category: 'カテゴリー',
+    category_description: 'このカテゴリーの投稿',
+    Uncategorized: '未分類',
   },
   'it-it': {
     Home: 'Home',
@@ -118,5 +130,8 @@ export const LANGUAGES = {
     next: 'Successivo',
     prev_post: 'Articolo Precedente',
     next_post: 'Articolo Succesivo',
+    category: 'Categoria',
+    category_description: 'Articoli in questa categoria',
+    Uncategorized: 'Senza categoria',
   },
 }

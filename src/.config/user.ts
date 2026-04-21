@@ -31,7 +31,6 @@ export const userConfig: Partial<UserConfig> = {
     ],
     link: [
       { rel: 'sitemap', href: '/sitemap-index.xml', type: 'application/xml' },
-      { rel: 'canonical', href: 'https://deepfog.top/' },
     ],
     jsonLd: [
       // 网站信息的结构化数据

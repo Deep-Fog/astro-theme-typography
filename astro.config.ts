@@ -53,10 +53,10 @@ export default defineConfig({
       priority: 0.7,
       lastmod: new Date(),
       customPages: [
-        `${themeConfig.site.website}`,
-        `${themeConfig.site.website}/about`,
-        `${themeConfig.site.website}/archive`,
-        `${themeConfig.site.website}/categories`,
+        new URL('/', themeConfig.site.website).toString(),
+        new URL('/about', themeConfig.site.website).toString(),
+        new URL('/archive', themeConfig.site.website).toString(),
+        new URL('/categories', themeConfig.site.website).toString(),
       ],
     }),
     swup({

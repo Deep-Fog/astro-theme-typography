@@ -31,11 +31,10 @@ async function createPost(): Promise<void> {
   }
 
   const frontmatter = getFrontmatter({
-    title: filename,
+    title: JSON.stringify(filename),
     pubDate: dayjs().format('YYYY-MM-DD'),
     categories: '[]',
     description: '\'\'',
-    slug: filename.toLowerCase().replace(/\s+/g, '-'),
     draft: isDraft ? 'true' : 'false',
   })
 

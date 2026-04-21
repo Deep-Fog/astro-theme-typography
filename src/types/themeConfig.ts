@@ -1,4 +1,4 @@
-import type { Link, Meta } from 'astro-seo'
+import type { SEOProps } from 'astro-seo'
 import type {
   AvailableLanguage,
   BooleanString,
@@ -9,6 +9,10 @@ import type {
   Theme,
 } from 'giscus'
 import type { LANGUAGES } from '../i18n.ts'
+
+type SeoExtend = NonNullable<SEOProps['extend']>
+type Link = NonNullable<SeoExtend['link']> extends Array<infer T> ? T : never
+type Meta = NonNullable<SeoExtend['meta']> extends Array<infer T> ? T : never
 
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];

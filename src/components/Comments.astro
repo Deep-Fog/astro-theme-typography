@@ -16,9 +16,13 @@ const url = `${Astro.site?.href}${path}`
 
 const provider = getProvider()
 
-function getProvider() {
-  const result = Object.keys(themeConfig.comment)[0]
-  return result || ''
+function getProvider(): 'giscus' | 'disqus' | 'twikoo' | '' {
+  const candidates = ['giscus', 'disqus', 'twikoo'] as const
+  const comment = themeConfig.comment as Record<string, unknown>
+  for (const name of candidates) {
+    if (comment[name]) return name
+  }
+  return ''
 }
 ---
 

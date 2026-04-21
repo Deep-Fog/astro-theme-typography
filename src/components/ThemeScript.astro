@@ -17,13 +17,16 @@ const theme = themeConfig.appearance.theme
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }
 
-  // Initial theme setup
+  // Initial theme setup (runs on every page load, including swup navigations)
   updateTheme(theme)
 
-  // Listen for OS theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (theme === 'system') {
-      document.documentElement.classList.toggle('dark', e.matches)
-    }
-  })
+  // Only register the matchMedia listener once to avoid stacking across swup navigations.
+  if (!window.__themeMediaBound) {
+    window.__themeMediaBound = true
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (theme === 'system') {
+        document.documentElement.classList.toggle('dark', e.matches)
+      }
+    })
+  }
 </script>

@@ -26,13 +26,13 @@ const configSite = themeConfig.site
 
 const title = props.title ?? configSite.title
 const desc = props.desc ?? configSite.description
-const canonical = props.canonicalUrl ?? configSite.website
 const twitter = configSEO.twitter
 const rss = new URL('/atom.xml', Astro.site).toString()
 const optimizedImage = await getOptimizedImageURL()
 const keywords = props.keywords ?? configSite.description
 const author = props.author ?? configSite.author
 const currentUrl = new URL(Astro.url.pathname, Astro.site).toString()
+const canonical = props.canonicalUrl ?? currentUrl
 const locale = props.locale ?? themeConfig.appearance.locale ?? 'zh-CN'
 const pageType = props.type ?? (Astro.url.pathname.includes('/posts/') ? 'article' : 'website')
 
@@ -58,7 +58,6 @@ const seoMeta = [
   { name: 'author', content: author },
   { name: 'robots', content: 'index, follow' },
   { name: 'googlebot', content: 'index, follow' },
-  { name: 'canonical', content: currentUrl },
   // Open Graph 基本标签
   { property: 'og:title', content: title },
   { property: 'og:description', content: desc },
@@ -83,8 +82,14 @@ const seoMeta = [
   { name: 'apple-mobile-web-app-title', content: title },
   { name: 'application-name', content: title },
   { name: 'msapplication-TileColor', content: themeConfig.appearance.colorsLight.primary },
-  ...configSEO.meta,
 ]
+
+// 合并用户自定义 meta，按 name/property 去重（用户配置优先）
+function metaKey(m: Record<string, any>): string {
+  return (m.name as string) ?? (m.property as string) ?? ''
+}
+const userMetaKeys = new Set(configSEO.meta.map(metaKey).filter(Boolean))
+const mergedMeta = [...seoMeta.filter((m) => !userMetaKeys.has(metaKey(m))), ...configSEO.meta]
 
 const openGraph: SEOProps['openGraph'] = {
   basic: {
@@ -114,7 +119,7 @@ const openGraph: SEOProps['openGraph'] = {
 
 async function getOptimizedImageURL() {
   const image = props.banner && (await getImage({ src: props.banner, format: 'jpeg', width: 1200, height: 630 }))
-  return new URL(image?.src ?? '/placeholder.png', Astro.url).toString()
+  return new URL(image?.src ?? '/placeholder.png', Astro.site).toString()
 }
 ---
 
@@ -122,7 +127,8 @@ async function getOptimizedImageURL() {
   charset="utf-8"
   title={title}
   description={desc}
-  extend={{ link: seoLinks, meta: seoMeta }}
+  canonical={canonical}
+  extend={{ link: seoLinks, meta: mergedMeta }}
   openGraph={openGraph}
 />
 
@@ -130,6 +136,14 @@ async function getOptimizedImageURL() {
 {
   (props.jsonLd || configSEO.jsonLd) &&
     (props.jsonLd || configSEO.jsonLd || []).map((data) => (
-      <script type="application/ld+json" is:inline set:html={JSON.stringify(data)} />
+      <script
+        type="application/ld+json"
+        is:inline
+        set:html={JSON.stringify(data)
+          .replace(/<\/(script)/gi, '<\\/$1')
+          .replace(/<!--/g, '<\\!--')
+          .replace(/\u2028/g, '\\u2028')
+          .replace(/\u2029/g, '\\u2029')}
+      />
     ))
 }
