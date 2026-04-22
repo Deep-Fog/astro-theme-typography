@@ -5,18 +5,20 @@ import PostCategory from './PostCategory.astro'
 
 interface Props {
   post: Post
+  level?: 1 | 2 | 3
 }
 
-const { post } = Astro.props
+const { post, level = 1 } = Astro.props
 const { translate: t } = Astro.locals
 
 const categoryList = post.data.categories ?? []
+const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3'
 ---
 
 <header flex="~ col gap-2">
-  <h1 class="post-title">
+  <HeadingTag class="post-title">
     <a class="not-prose" href={`/posts/${post.id}/`}>{post.data.title}</a>
-  </h1>
+  </HeadingTag>
   <div class="text-3.5">
     <span>{t(post.data.modDate ? 'updated_at' : 'posted_at')}</span>
     <time>{formatDate(post.data.modDate ?? post.data.pubDate)}</time>

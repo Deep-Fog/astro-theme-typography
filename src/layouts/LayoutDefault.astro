@@ -39,7 +39,7 @@ const dark = themeConfig.appearance.theme === 'dark'
       <SiteNavigation />
     </header>
 
-    <main class="transition-swup-main overflow-y-scroll scrollbar-hide outline-none" lg="row-1-3 col-1-2 py-20 ">
+    <main class="transition-swup-main overflow-y-auto" lg="row-1-3 col-1-2 py-20 ">
       <slot />
     </main>
 
@@ -103,6 +103,28 @@ const dark = themeConfig.appearance.theme === 'dark'
         transition-timing-function: linear;
         transform: translateY(0);
         opacity: 1;
+      }
+
+      /* F1: focus-visible ring for keyboard a11y (WCAG 2.4.7) */
+      main:focus-visible {
+        outline: 2px solid var(--uno-colors-primary);
+        outline-offset: -2px;
+      }
+
+      /* F1: subtle scrollbar styling instead of hiding */
+      main::-webkit-scrollbar {
+        width: 6px;
+      }
+      main::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      main::-webkit-scrollbar-thumb {
+        background: var(--uno-colors-shadow);
+        border-radius: 3px;
+      }
+      main {
+        scrollbar-width: thin;
+        scrollbar-color: var(--uno-colors-shadow) transparent;
       }
     </style>
   </body>

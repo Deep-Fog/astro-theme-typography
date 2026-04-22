@@ -1,17 +1,10 @@
 ---
 import { themeConfig } from '~/.config'
+import katexCssUrl from 'katex/dist/katex.min.css?url'
 
 const { latex } = themeConfig
 
 const katex = latex.katex
 ---
 
-{
-  katex && (
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"
-      crossorigin="anonymous"
-    />
-  )
-}
+{katex && <link rel="stylesheet" href={katexCssUrl} />}
