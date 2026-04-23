@@ -13,6 +13,7 @@ const { translate: t } = Astro.locals
 
 const categoryList = post.data.categories ?? []
 const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3'
+const dateValue = post.data.modDate ?? post.data.pubDate
 ---
 
 <header flex="~ col gap-2">
@@ -21,7 +22,7 @@ const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3'
   </HeadingTag>
   <div class="text-3.5">
     <span>{t(post.data.modDate ? 'updated_at' : 'posted_at')}</span>
-    <time>{formatDate(post.data.modDate ?? post.data.pubDate)}</time>
+    <time datetime={dateValue.toISOString()}>{formatDate(dateValue)}</time>
     {categoryList.map((category) => <PostCategory category={category} />)}
   </div>
 </header>

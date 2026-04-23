@@ -1,0 +1,100 @@
+cbeb2d9 feat: implement paginated post list layout with improved accessibility and SEO support
+79443fe fix: harden SEO, PWA, i18n, and types across the site
+6392952 chore: migrate user config from default.ts to user.ts
+88171c4 fix: harden post utils, RSS XML escaping, and create-post script
+2acead9 docs: sync new posts from obsidian
+70cc7ce chore: update pnpm-lock.yaml to match package.json dependencies
+fdc9b38 fix: quote date-like slug to prevent build error
+06505d3 Refactor code structure for improved readability and maintainability
+c395d0c Merge branch 'main' of https://github.com/Deep-Fog/astro-theme-typography
+cebbc37 debug
+653fd58 docs: sync new posts from obsidian
+8fa82bc refactor: add
+162ca9c chore: 添加类型检查脚本并恢复 TypeScript 依赖项
+12baa13 chore: 更新 package.json，添加描述、作者和许可证信息，并将 esno 替换为 tsx
+f81d4b2 chore: 更新推荐的 VSCode 扩展以替换 biomejs.biome
+dbe9f9c chore: 移除未使用的依赖项和版本
+b50286b chore: 更新依赖到 major 版本
+cf1bc18 chore: 更新依赖项和包管理器版本
+ce03eb2 feat: 更新主题脚本以支持系统主题变化并优化代码格式
+4f331ed docs: update post creation command (#214)
+bbdf904 docs: add demo in readme (#211)
+423e0c4 feat: add modified datetime support (#194)
+8aad5fe feat: 添加文章置顶功能并更新构建脚本 (#188)
+7b3bf89 Add OS-based theme switching support (#186)
+913279d feat: Add support for draft posts (#184)
+711bcbc Upgrade To Astro v5  (#183)
+2b3342a build(deps): bump vite from 5.4.6 to 5.4.10 (#171)
+8997f20 build(deps-dev): bump eslint from 9.10.0 to 9.16.0 (#181)
+77f74b5 docs: add Jinx's blog in readme (#178)
+8b1c917 Upgrade To Astro v5 (#182)
+309fc6d Update README.md (#174)
+2226051 Update italian translation.ts (#175)
+5925f26 refactor: refactor LaTeX render support (#168)
+d816c5c Added italian translation (#167)
+465d5c3 feat: add word wrap support (#166)
+0961f80 feat: latex and umami analytics support (#162)
+fde5c13 pref: 一些优化 (#159)
+4402ae9 feat: 支持自定义 footer (#157)
+9f83526 feat: 添加 Google Analytics (#156)
+46624cd fix: 防止 Safari 中 main 元素自动获得焦点 (#145)
+42b626b feat: 添加链接在 hover 时的渐变动画 (#151)
+e6c1415 feat: 支持添加自定义 SEO meta 与 link (#142)
+3c1b98f fix: hide scrollbar
+baa1b02 Major Refactor: Project Structure, Component Design, Style Optimization, and Configuration Updates (#140)
+e377c4d refactor: 优化代码样式 (#139)
+8174d4f refactor: 增加用户配置文件 (#137)
+ca95482 feat: Add global view transitions (#124)
+b1fc447 docs: add julyfun's blog in readme (#122)
+e521601 chore: Update README and theme.config
+f0961ba build(deps): bump @astrojs/mdx from 2.3.1 to 3.0.1 (#101)
+6c5d9bf build(deps-dev): bump markdown-it and @types/markdown-it (#103)
+2a3adb5 build(deps): bump astro-seo from 0.8.3 to 0.8.4 (#104)
+d2b33ad build(deps): bump @astrojs/check from 0.5.10 to 0.7.0 (#100)
+822a13f build(deps-dev): bump @unocss/transformer-directives (#102)
+795184e build(deps): bump astro from 4.5.9 to 4.9.2 (#99)
+d0671cd build(deps-dev): bump unocss from 0.58.5 to 0.60.4 (#98)
+5957c1b build(deps): bump @astrojs/sitemap from 3.1.1 to 3.1.5 (#95)
+d3dfb87 build(deps): bump @astrojs/mdx from 2.2.4 to 2.3.1 (#84)
+6f53ccf build(deps): bump typescript from 5.3.3 to 5.4.5 (#74)
+b4669c8 fix: fix post category url jump with mapping config (#73)
+ae9b4c4 🐞 fix: Fix sorting order of posts (#72)
+cadfefa 🐎 ci: Refactor release script and add changelog generation
+f41d501 chore: release v0.1.0
+2ade3d1 build(deps): bump astro-seo from 0.8.2 to 0.8.3 (#32)
+d694ccf build(deps): bump vite from 5.1.4 to 5.2.8 (#62)
+aef6b42 build(deps): bump @astrojs/check from 0.3.4 to 0.5.10 (#43)
+6b5ae74 build(deps-dev): bump @unocss/reset from 0.58.5 to 0.59.0 (#64)
+8267aea build(deps-dev): bump @types/node from 20.11.24 to 20.12.7 (#70)
+28e44cf fix: add missing dependencies (#71)
+78d9d7a 🔧 build: update pnpm-lock
+3bfd2c2 chore: improve the development experience (#69)
+3aa93da Fix MDX display and optimize new-post script (#68)
+9a9fffb chore: Refactor new post script (#67)
+7f0e465 fix：blockquote-css-optimization (#66)
+d64012b 📃 docs: Update deployment instructions and customization section
+609bd1e feat: 添加评论服务 (#61)
+3ed2791 Update README.md (#59)
+573cbca 🐞 fix: Add copy icons to safelist (#56)
+87b76c7 feat: 优化 Layout 显示一致性 (#55)
+13c1a5e 📃 docs: Update README.zh-CN.md with Chinese translations
+6139cc3 添加中文文档翻译 (#50)
+fb36f40 Merge pull request #52 from moeyua/refactor/copy-code
+a18799b 🦄 refactor: Add @github/clipboard-copy-element package and implement code copying functionality
+576b6ff 🐳 chore: Update Astro configuration and TypeScript compiler options
+9c8ee6a Merge pull request #41 from moeyua/dependabot/npm_and_yarn/astro-4.5.9
+0dd758a build(deps): bump astro from 4.4.9 to 4.5.9
+8e4d577 Merge pull request #30 from lz233/main
+a712019 feat: Optimize preview card for twitter
+c43e313 Merge pull request #29 from moeyua/bugfix/code-hyperlink-styling
+8589fa8 Merge pull request #28 from moeyua/dependabot/npm_and_yarn/types/node-20.11.22
+06db323 Merge pull request #19 from moeyua/dependabot/npm_and_yarn/unocss/transformer-directives-0.58.5
+989cbcc Merge branch 'main' into dependabot/npm_and_yarn/unocss/transformer-directives-0.58.5
+cb8f81d build(deps-dev): bump @types/node from 20.11.10 to 20.11.22
+a2aa971 Merge pull request #20 from moeyua/dependabot/npm_and_yarn/unocss/reset-0.58.5
+f2f4540 Merge pull request #21 from moeyua/dependabot/npm_and_yarn/unocss-0.58.5
+1801e7a Merge pull request #27 from moeyua/dependabot/npm_and_yarn/astro-4.4.4
+3ff1e4f build(deps): bump astro from 4.2.6 to 4.4.4
+f9e108c Merge pull request #16 from Ender-Wiggin2019/main
+adbcc35 build(deps-dev): bump unocss from 0.57.7 to 0.58.5
+4763e80 build(deps-dev): bump @unocss/reset from 0.58.4 to 0.58.5

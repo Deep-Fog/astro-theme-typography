@@ -22,16 +22,16 @@ function getListFromMap(map: typeof categoryMap) {
   <SiteSeo
     slot="seo"
     title={`${t('Categories')} - ${themeConfig.site.title}`}
-    desc={`${themeConfig.site.title}${t('all_categories_description') || '的所有文章分类'}`}
+    desc={`${themeConfig.site.title}${t('all_categories_description')}`}
     type="website"
     locale={themeConfig.appearance.locale}
-    keywords={`${t('Categories')},${themeConfig.site.title},${list.map((item) => item.title).join(',')}`}
+    keywords={`${t('Categories')},${themeConfig.site.title}`}
     jsonLd={[
       {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         headline: `${t('Categories')} - ${themeConfig.site.title}`,
-        description: `${themeConfig.site.title}${t('all_categories_description') || '的所有文章分类'}`,
+        description: `${themeConfig.site.title}${t('all_categories_description')}`,
         url: new URL(Astro.url.pathname, Astro.site).toString(),
         publisher: {
           '@type': 'Person',

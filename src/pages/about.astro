@@ -18,7 +18,7 @@ const { Content } = await render(aboutPost)
     </h1>
     <div class="text-3.5">
       <span>{t('posted_at')}</span>
-      <time>{formatDate(aboutPost.data.pubDate)}</time>
+      <time datetime={aboutPost.data.pubDate.toISOString()}>{formatDate(aboutPost.data.pubDate)}</time>
     </div>
   </header>
   <article class="prose">

@@ -11,6 +11,7 @@ interface ListItem {
   title: string
   href: string
   date: string
+  rawDate: Date
 }
 
 function getYearMap(posts: Post[]) {
@@ -29,6 +30,7 @@ function getListItem(post: Post): ListItem {
     title: post.data.title,
     href: `/posts/${post.id}/`,
     date: formatDate(post.data.pubDate, 'MM-DD'),
+    rawDate: post.data.pubDate ?? new Date(),
   }
 }
 ---
@@ -40,12 +42,12 @@ function getListItem(post: Post): ListItem {
         <section>
           <h2 class="post-title">{year}</h2>
           <ul class="pl-6" flex="~ col gap-4">
-            {posts.map(({ title, href, date }) => (
+            {posts.map(({ title, href, date, rawDate }) => (
               <li>
                 <h3 class="post-title">
                   <a href={href}>{title}</a>
                 </h3>
-                <time>{date}</time>
+                <time datetime={rawDate.toISOString()}>{date}</time>
               </li>
             ))}
           </ul>

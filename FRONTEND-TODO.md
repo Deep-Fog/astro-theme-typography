@@ -35,11 +35,11 @@ the line so the log stays auditable — do not delete resolved entries.
 
 ### a11y
 
-- [ ] **F4. `target="_blank"` missing `rel="noopener noreferrer"`** — `src/components/SiteNavigation.astro:24`, `src/.config/default.ts:52-54`
+- [x] **F4. `target="_blank"` missing `rel="noopener noreferrer"`** — `src/components/SiteNavigation.astro:24`, `src/.config/default.ts:52-54`
 
   - Tab-napping risk + explicit intent. Default footer strings in `default.ts` also need updating.
 
-- [ ] **F5. No `prefers-reduced-motion` fallback** — `src/layouts/LayoutDefault.astro:57-107`
+- [x] **F5. No `prefers-reduced-motion` fallback** — `src/layouts/LayoutDefault.astro:57-107`
 
   - First-paint fade-in (1s) and swup transitions ignore the OS preference.
   - Fix:
@@ -54,16 +54,16 @@ the line so the log stays auditable — do not delete resolved entries.
     }
     ```
 
-- [ ] **F6. `<time>` without `datetime` attribute** — `src/components/PostMeta.astro:22`, `src/pages/archive.astro:46`, `src/pages/about.astro:21`
+- [x] **F6. `<time>` without `datetime` attribute** — `src/components/PostMeta.astro:22`, `src/pages/archive.astro:46`, `src/pages/about.astro:21`
 
   - Add `datetime={date.toISOString()}` so the value is machine-readable.
 
-- [ ] **F7. `<hgroup>` has `cursor-pointer` but is not interactive** — `src/components/SiteTitle.astro:7-11`
+- [x] **F7. `<hgroup>` has `cursor-pointer` but is not interactive** — `src/components/SiteTitle.astro:7-11`
 
   - Only the inner `<a>` is clickable; the surrounding hgroup misleads users.
   - Fix: drop `cursor-pointer`, or restructure so the anchor wraps the entire clickable surface.
 
-- [ ] **F8. Social icon links lack `aria-label`** — `src/components/SiteNavigation.astro:24-26`
+- [x] **F8. Social icon links lack `aria-label`** — `src/components/SiteNavigation.astro:24-26`
   - `i-mdi-*` turns the span into a background-image; the inner `{name}` text is not visually shown and screen-readers hear lowercase slugs like "github".
   - Fix:
     ```astro
@@ -79,34 +79,34 @@ the line so the log stays auditable — do not delete resolved entries.
 
 ### perf / responsive
 
-- [ ] **F9. `h-100vh` clipped by iOS Safari URL bar** — `src/layouts/LayoutDefault.astro:29`
+- [x] **F9. `h-100vh` clipped by iOS Safari URL bar** — `src/layouts/LayoutDefault.astro:29`
 
   - Footer can be occluded by the dynamic toolbar. Switch to `100dvh` (or `100svh`).
 
-- [ ] **F10. Sticky hover state on touch devices** — `src/styles/global.css:17-22`
+- [x] **F10. Sticky hover state on touch devices** — `src/styles/global.css:17-22`
 
   - Wrap the hover rule in `@media (hover: hover)` or use the `pointer-fine:hover:` UnoCSS variant so taps don't leave the color-inverted state.
 
-- [ ] **F11. 1s first-paint fade-in delays LCP** — `src/layouts/LayoutDefault.astro:60-67`
+- [x] **F11. 1s first-paint fade-in delays LCP** — `src/layouts/LayoutDefault.astro:60-67`
 
   - Shorten to 300-500ms.
 
-- [ ] **F12. Global `text-shadow` on `<html>`** — `src/styles/global.css:11`
+- [x] **F12. Global `text-shadow` on `<html>`** — `src/styles/global.css:11`
   - Applied to every glyph (including `<pre>`/`<code>`), increases paint cost and reduces readability in low-contrast contexts.
   - Fix: scope the shadow (e.g. exclude `pre, code, small` via `html :not(pre):not(code)`).
 
 ### i18n / SEO polish
 
-- [ ] **F13. `/categories/index.astro` still has missing i18n key** — `src/pages/categories/index.astro:25,34`
+- [x] **F13. `/categories/index.astro` still has missing i18n key** — `src/pages/categories/index.astro:25,34`
 
   - `all_categories_description` was not added in the previous pass; fallback is dead because `validateKey` returns the key itself (truthy).
   - Fix: add `all_categories_description` to all five locales in `src/i18n.ts`.
 
-- [ ] **F14. `/categories/index.astro` keywords meta still concatenates every category** — `src/pages/categories/index.astro:28`
+- [x] **F14. `/categories/index.astro` keywords meta still concatenates every category** — `src/pages/categories/index.astro:28`
 
   - Same fix as the single-category page: drop the list concat. Keywords meta is ignored by Google anyway.
 
-- [ ] **F15. List view double-wraps in `<article class="prose">`** — `src/layouts/LayoutPost.astro`
+- [x] **F15. List view double-wraps in `<article class="prose">`** — `src/layouts/LayoutPost.astro`
   - Typography plugin adds heading/paragraph rhythm meant for articles, not compact cards. Creates excessive vertical whitespace on the home feed.
   - Fix: split `LayoutPost` into a list-card variant (no `prose` wrapper, or `prose-sm`).
 
