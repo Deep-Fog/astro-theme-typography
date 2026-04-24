@@ -11,8 +11,8 @@ interface Props {
 
 const { id, data } = Astro.props.post
 
-const path = `/posts/${id}`
-const url = `${Astro.site?.href}${path}`
+const path = `/posts/${id}/`
+const url = new URL(path, Astro.site).toString()
 
 const provider = getProvider()
 
