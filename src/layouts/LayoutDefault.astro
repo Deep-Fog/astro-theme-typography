@@ -18,6 +18,9 @@ const dark = themeConfig.appearance.theme === 'dark'
 <html lang={lang} class:list={['animation-prepared', { dark }]}>
   <head>
     <slot name="seo"> <SiteSeo /> </slot>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@wc1font/source-han-serif-sc-vf/font.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wc1font/source-han-serif-sc-vf/font.css" />
     <LaTeX />
     <Analytics />
     <GoogleVerification />
