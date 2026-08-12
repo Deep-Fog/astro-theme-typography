@@ -2,6 +2,7 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro'
 import { themeConfig } from '~/.config'
 import Comments from '~/components/Comments.astro'
+import Globe from '~/components/Globe.astro'
 import Pagination from '~/components/Pagination.astro'
 import SiteSeo from '~/components/SiteSeo.astro'
 import LayoutDefault from '~/layouts/LayoutDefault.astro'
@@ -117,7 +118,8 @@ function getUrl(id: string) {
   />
 
   <LayoutPost post={entry}>
-    <Content />
+    {/* components 中的组件可在 .mdx 正文里免 import 直接使用 */}
+    <Content components={{ Globe }} />
   </LayoutPost>
 
   <Pagination
