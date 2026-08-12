@@ -1,0 +1,45 @@
+---
+import Globe from '~/components/Globe.astro'
+import SiteSeo from '~/components/SiteSeo.astro'
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+
+const { translate: t } = Astro.locals
+const title = t('Arrival')
+
+// 邮政式拼音（Postal Romanization）地名，坐标为十进制度
+const PLACES: { id: string; label: string; location: [number, number] }[] = [
+  { id: 'shanghai', label: 'Shanghai', location: [31.2304, 121.4737] },
+  { id: 'foochow', label: 'Foochow', location: [26.0745, 119.2965] },
+  { id: 'hangchow', label: 'Hangchow', location: [30.2443, 120.1652] },
+  { id: 'soochow', label: 'Soochow', location: [31.3075, 120.6196] },
+  { id: 'nanking', label: 'Nanking', location: [32.0415, 118.784] },
+  { id: 'canton', label: 'Canton', location: [23.1291, 113.2644] },
+  { id: 'fatshan', label: 'Fatshan', location: [23.0215, 113.1214] },
+  { id: 'hongkong', label: 'Hongkong', location: [22.3022, 114.1747] },
+  { id: 'macao', label: 'Macao', location: [22.1934, 113.5397] },
+  { id: 'hankow', label: 'Hankow', location: [30.581, 114.2962] },
+  { id: 'changsha', label: 'Changsha', location: [28.1987, 112.9772] },
+  { id: 'nanchang', label: 'Nanchang', location: [28.6756, 115.9002] },
+]
+
+const markers = PLACES.map((place) => ({ ...place, size: 0.03 }))
+---
+
+<LayoutDefault>
+  <SiteSeo slot="seo" title={title} />
+  <header flex="~ col gap-2">
+    <h1 class="post-title">{title}</h1>
+  </header>
+  <article class="prose">
+    <Globe
+      size={720}
+      scale={1.2}
+      phi={2.681}
+      theta={0.479}
+      labelVariant="pin"
+      markers={markers}
+      markerColor={[0.608, 0.737, 0.059]}
+      alt="标注了十二座华东华南城市的地球，可以拖拽旋转"
+    />
+  </article>
+</LayoutDefault>

@@ -21,6 +21,29 @@ export const userConfig: Partial<UserConfig> = {
         href: '/atom.xml',
       },
     ],
+    // deepMerge 对数组是整体替换，这里需要写全量
+    navLinks: [
+      {
+        name: 'Posts',
+        href: '/',
+      },
+      {
+        name: 'Archive',
+        href: '/archive',
+      },
+      {
+        name: 'Categories',
+        href: '/categories',
+      },
+      {
+        name: 'Arrival',
+        href: '/arrival',
+      },
+      {
+        name: 'About',
+        href: '/about',
+      },
+    ],
   },
   seo: {
     meta: [
