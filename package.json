@@ -28,6 +28,7 @@
     "astro": "^5.11.1",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.4",
+    "cobe": "^2.0.1",
     "giscus": "^1.6.0",
     "katex": "^0.16.11",
     "rehype-katex": "^7.0.1",

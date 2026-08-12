@@ -1,0 +1,435 @@
+---
+import type { GlobeAppearance, GlobeArc, GlobeConfig, GlobeLabelVariant, GlobeMarker, RGB } from '~/types/globe'
+import { labelGutter, labelStyle, resolveMarkers } from '~/utils/globe'
+
+interface Props {
+  /** 直径上限（px），实际宽度不会超过所在容器 */
+  size?: number
+  /** 每帧自转弧度，0 表示静止 */
+  speed?: number
+  /** 初始经度（弧度） */
+  phi?: number
+  /** 初始纬度（弧度），正值偏向北半球 */
+  theta?: number
+  /** 是否允许拖拽旋转 */
+  interactive?: boolean
+  /** 地表光点 */
+  markers?: GlobeMarker[]
+  /** 标签外观：badge 为深色胶囊可点开，note 为彩色便签纯展示，pin 为带下尖角的像素标牌 */
+  labelVariant?: GlobeLabelVariant
+  /** 连接两地的弧线 */
+  arcs?: GlobeArc[]
+  /** 陆地采样点数量，越大越精细也越耗性能 */
+  mapSamples?: number
+  /** 球体缩放 */
+  scale?: number
+  /** 画布内偏移 [x, y] */
+  offset?: [number, number]
+  /** 整体不透明度 */
+  opacity?: number
+  arcColor?: RGB
+  arcWidth?: number
+  arcHeight?: number
+  markerElevation?: number
+  /** 以下配色同时作用于明暗两种模式，可被 light / darkMode 覆盖 */
+  dark?: number
+  diffuse?: number
+  mapBrightness?: number
+  mapBaseBrightness?: number
+  baseColor?: RGB
+  markerColor?: RGB
+  glowColor?: RGB
+  /** 亮色模式下的配色覆盖 */
+  light?: Partial<GlobeAppearance>
+  /** 暗色模式下的配色覆盖 */
+  darkMode?: Partial<GlobeAppearance>
+  /** 图注，同时作为无障碍描述的回退 */
+  caption?: string
+  /** 无障碍描述，缺省时回落到 caption */
+  alt?: string
+  class?: string
+}
+
+const LIGHT_APPEARANCE: GlobeAppearance = {
+  dark: 0,
+  diffuse: 1.2,
+  mapBrightness: 5,
+  mapBaseBrightness: 0,
+  baseColor: [1, 1, 1],
+  markerColor: [0.18, 0.25, 0.36],
+  glowColor: [0.9, 0.9, 0.92],
+}
+
+const DARK_APPEARANCE: GlobeAppearance = {
+  dark: 1,
+  diffuse: 1.2,
+  mapBrightness: 5,
+  mapBaseBrightness: 0.04,
+  baseColor: [0.22, 0.23, 0.26],
+  markerColor: [0.55, 0.75, 1],
+  glowColor: [0.14, 0.15, 0.17],
+}
+
+const {
+  size = 400,
+  speed = 0.004,
+  phi = 0,
+  theta = 0.3,
+  interactive = true,
+  markers = [],
+  labelVariant = 'badge',
+  arcs = [],
+  mapSamples = 16000,
+  scale = 1,
+  offset = [0, 0],
+  opacity = 1,
+  arcColor,
+  arcWidth = 0.5,
+  arcHeight = 0.3,
+  markerElevation = 0.05,
+  dark,
+  diffuse,
+  mapBrightness,
+  mapBaseBrightness,
+  baseColor,
+  markerColor,
+  glowColor,
+  light,
+  darkMode,
+  caption,
+  alt,
+  class: className,
+} = Astro.props
+
+// 去掉未传入的键，避免 undefined 覆盖掉默认值
+function defined(source?: Partial<GlobeAppearance>): Partial<GlobeAppearance> {
+  if (!source) return {}
+  return Object.fromEntries(
+    Object.entries(source).filter(([, value]) => value !== undefined),
+  ) as Partial<GlobeAppearance>
+}
+
+// 顶层配色作为明暗两套的共同基准，再由 light / darkMode 分别覆盖
+const shared = defined({ dark, diffuse, mapBrightness, mapBaseBrightness, baseColor, markerColor, glowColor })
+
+const { resolved: resolvedMarkers, labels } = resolveMarkers(markers)
+const gutter = labelGutter(labels, labelVariant)
+
+const config: GlobeConfig = {
+  speed,
+  phi,
+  theta,
+  interactive,
+  mapSamples,
+  scale,
+  offset,
+  opacity,
+  markers: resolvedMarkers,
+  arcs,
+  arcColor,
+  arcWidth,
+  arcHeight,
+  markerElevation,
+  light: { ...LIGHT_APPEARANCE, ...shared, ...defined(light) },
+  dark: { ...DARK_APPEARANCE, ...shared, ...defined(darkMode) },
+}
+---
+
+<figure
+  class:list={['cobe-globe', className]}
+  style={`--cobe-size: ${size}px${gutter ? `; --cobe-label-gutter: ${gutter}px` : ''}`}
+  data-cobe-globe={JSON.stringify(config)}
+  data-interactive={interactive ? '' : undefined}
+>
+  <div class="cobe-globe__stage">
+    <canvas class="cobe-globe__canvas" role="img" aria-label={alt ?? caption ?? 'Globe'}></canvas>
+    {
+      labels.map((item) =>
+        // note 是纯展示的便签，只有 badge 才有可点开的 detail
+        labelVariant === 'badge' && item.detail ? (
+          <button
+            type="button"
+            class="cobe-globe__label cobe-globe__label--badge"
+            aria-expanded="false"
+            style={labelStyle(item)}
+          >
+            <span class="cobe-globe__label-name">{item.label}</span>
+            <span class="cobe-globe__label-detail">{item.detail}</span>
+          </button>
+        ) : (
+          <span
+            class:list={['cobe-globe__label', `cobe-globe__label--${labelVariant}`, 'cobe-globe__label--static']}
+            style={labelStyle(item)}
+          >
+            <span class="cobe-globe__label-name">{item.label}</span>
+          </span>
+        ),
+      )
+    }
+    <div class="cobe-globe__fallback">
+      <slot>WebGL is unavailable in this browser.</slot>
+    </div>
+  </div>
+  {caption && <figcaption class="cobe-globe__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .cobe-globe {
+    display: block;
+    width: 100%;
+    /* 标签以锚点为中心横向展开，球体转到边缘时会探出画布。
+       祖先的滚动容器（main 的 overflow-y:scroll 会让 overflow-x 变成 auto）会把探出的部分裁掉，
+       所以把这段空间收进组件自身，别越界。无标签时 gutter 为 0，尺寸与原来一致。 */
+    max-width: calc(var(--cobe-size, 400px) + 2 * var(--cobe-label-gutter, 0px));
+    padding-inline: var(--cobe-label-gutter, 0px);
+    margin-inline: auto;
+  }
+
+  .cobe-globe__stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .cobe-globe__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+
+  .cobe-globe[data-ready] .cobe-globe__canvas {
+    opacity: 1;
+  }
+
+  .cobe-globe[data-interactive] .cobe-globe__canvas {
+    cursor: grab;
+    /* 纵向手势留给页面滚动，横向交给地球 */
+    touch-action: pan-y;
+  }
+
+  .cobe-globe[data-interactive][data-dragging] .cobe-globe__canvas {
+    cursor: grabbing;
+  }
+
+  .cobe-globe__fallback {
+    display: none;
+    position: absolute;
+    inset: 0;
+    place-items: center;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    opacity: 0.65;
+  }
+
+  .cobe-globe[data-unsupported] .cobe-globe__fallback {
+    display: grid;
+  }
+
+  .cobe-globe__caption {
+    text-align: center;
+  }
+
+  /* ── 标签：靠 CSS 锚点定位吸附在光点上方 ───────────── */
+
+  .cobe-globe__label {
+    position: absolute;
+    bottom: anchor(top);
+    left: anchor(center);
+    translate: -50% 0;
+    border: 0;
+  }
+
+  /* 没有 detail 的标签不参与交互，把指针让给球体拖拽 */
+  .cobe-globe__label--static {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ── badge：深色胶囊，点一下展开 detail ─────────────── */
+
+  .cobe-globe__label--badge {
+    margin: 0 0 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem 0.5rem;
+    border-radius: 3px;
+    background: var(--uno-colors-primary);
+    color: var(--uno-colors-background);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+    /* 站点给 html 加了全局 text-shadow，小字号标签上会糊 */
+    text-shadow: none;
+    cursor: pointer;
+    transition:
+      opacity 0.4s,
+      filter 0.4s,
+      scale 0.2s,
+      padding 0.2s;
+  }
+
+  .cobe-globe__label--badge:hover {
+    scale: 1.05;
+  }
+
+  .cobe-globe__label--badge .cobe-globe__label-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cobe-globe__label-detail {
+    display: none;
+    margin-top: 0.15rem;
+    font-size: 0.55rem;
+    line-height: 1.2;
+    opacity: 0.8;
+  }
+
+  .cobe-globe__label--badge[aria-expanded='true'] {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .cobe-globe__label--badge[aria-expanded='true'] .cobe-globe__label-detail {
+    display: block;
+    animation: cobe-label-detail 0.2s ease-out;
+  }
+
+  @keyframes cobe-label-detail {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 0.8;
+      transform: translateY(0);
+    }
+  }
+
+  /* ── note：彩色便签，随手贴在光点上 ─────────────────── */
+
+  .cobe-globe__label--note {
+    /* 负边距让便签压住光点，像贴上去的 */
+    margin: 0 0 -10px;
+    padding: 0.4rem 0.65rem 0.35rem;
+    background: var(--cobe-label-color, #ffe66d);
+    color: #fff;
+    font-family:
+      ui-rounded,
+      'SF Pro Rounded',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    /* 与 demo 一致用 transform，配合基类的 translate 独立属性先居中再旋转 */
+    transform: rotate(var(--cobe-label-rotate, 0deg));
+    border-radius: 4px;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      0 3px 8px rgba(0, 0, 0, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    transition:
+      opacity 0.3s,
+      filter 0.3s;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* 顶部高光，做出贴纸的塑封感 */
+  .cobe-globe__label--note::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+    border-radius: 4px 4px 50% 50%;
+    pointer-events: none;
+  }
+
+  /* ── pin：带下尖角的像素标牌 ─────────────────────────── */
+
+  /* 只有 pin 外观会真正触发下载 */
+  @font-face {
+    font-family: 'Silkscreen';
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/silkscreen@5.3.0/files/silkscreen-latin-400-normal.woff2')
+      format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .cobe-globe__label--pin {
+    /* 5px 尖角 + 2px 间隙 */
+    margin: 0 0 7px;
+    padding: 3px 5px 2px;
+    background: var(--cobe-label-color, #9bbc0f);
+    color: #0f380f;
+    font-family: 'Silkscreen', ui-monospace, monospace;
+    /* 8px 是 Silkscreen 的设计网格，非整数倍会被插值糊掉像素边 */
+    font-size: 8px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    /* 站点全局的 text-shadow 与抗锯齿都会吃掉像素字体的硬边 */
+    text-shadow: none;
+    -webkit-font-smoothing: none;
+    transition:
+      opacity 0.3s,
+      filter 0.3s;
+  }
+
+  .cobe-globe__label--pin::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    translate: -50% 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--cobe-label-color, #9bbc0f);
+  }
+
+  .cobe-globe[data-unsupported] .cobe-globe__label {
+    display: none;
+  }
+  /* CSS 锚点定位需要 Chrome 125+ / Safari 26+ / Firefox 147+ */
+  @supports not (anchor-name: --cobe-probe) {
+    .cobe-globe__label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cobe-globe__canvas {
+      transition: none;
+    }
+
+    .cobe-globe__label {
+      transition: none;
+    }
+
+    .cobe-globe__label--badge:hover {
+      scale: 1;
+    }
+
+    .cobe-globe__label--badge[aria-expanded='true'] .cobe-globe__label-detail {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import '~/scripts/globe'
+</script>
