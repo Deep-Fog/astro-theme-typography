@@ -13,11 +13,13 @@ const { translate: t } = Astro.locals
 
 const categoryList = post.data.categories ?? []
 const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3'
+// level 1 = 文章页主标题（30px）；level 2/3 = 列表页条目标题（20px）
+const titleClass = level === 1 ? 'article-title' : 'post-title'
 const dateValue = post.data.modDate ?? post.data.pubDate
 ---
 
 <header flex="~ col gap-2">
-  <HeadingTag class="post-title">
+  <HeadingTag class={titleClass}>
     <a class="not-prose" href={`/posts/${post.id}/`}>{post.data.title}</a>
   </HeadingTag>
   <div class="text-3.5">
