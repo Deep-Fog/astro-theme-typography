@@ -8,6 +8,7 @@ import remarkMath from 'remark-math'
 import UnoCSS from 'unocss/astro'
 import devtoolsJson from 'vite-plugin-devtools-json'
 import { themeConfig } from './src/.config'
+import { rehypeShiftHeadings } from './src/plugins/rehype-shift-headings'
 
 // https://astro.build/config
 export default defineConfig({
@@ -27,6 +28,7 @@ export default defineConfig({
     ],
     rehypePlugins: [
       rehypeKatex,
+      rehypeShiftHeadings,
     ],
     shikiConfig: {
       theme: 'dracula',
