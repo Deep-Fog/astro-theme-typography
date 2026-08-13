@@ -3,7 +3,10 @@
     "allow": [
       "Bash(pnpm typecheck *)",
       "Bash(pnpm exec *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Read(//tmp/**)"
     ]
   }
 }
